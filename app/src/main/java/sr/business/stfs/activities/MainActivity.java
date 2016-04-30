@@ -53,6 +53,14 @@ public class MainActivity extends AppCompatActivity
         if (navigationView != null) {
             navigationView.setNavigationItemSelectedListener(this);
         }
+
+        if (savedInstanceState == null) {
+            getSupportFragmentManager().beginTransaction().replace(R.id.main_frame, new ProductOverviewFragment()).commit();
+        }
+
+        if (navigationView != null) {
+            navigationView.getMenu().getItem(0).setChecked(true);
+        }
     }
 
     @Override
