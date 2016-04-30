@@ -15,6 +15,7 @@ public class Stfsuser {
     private String u_phone2;
     private String u_phone3;
     private String u_address;
+    private String u_code;
 
 
     public Long getU_id() {
@@ -76,5 +77,13 @@ public class Stfsuser {
     }
     public void setU_address(String u_address) {
         this.u_address = u_address;
+    }
+
+    public String getU_code() {
+        return u_code;
+    }
+
+    public void setU_code(String u_code) {
+        this.u_code = u_code;
     }
 }

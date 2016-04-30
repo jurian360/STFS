@@ -18,13 +18,12 @@ public class NetworkClient {
 
     OkHttpClient client = Dataholder.getInstance().getClient();
 
-    public String post(String url, String json) throws IOException {
+    public Response post(String url, String json) throws IOException {
         RequestBody body = RequestBody.create(JSON, json);
         Request request = new Request.Builder()
                 .url(url)
                 .post(body)
                 .build();
-        Response response = client.newCall(request).execute();
-        return response.body().string();
+        return client.newCall(request).execute();
     }
 }

@@ -9,4 +9,5 @@ public class Global {
     public static final String model = "/user/AddUser";
     public static final String post = "/post";
     public static final String get = "/get";
+    public static final String loginWebservice = domain + app + "/user/FindUser";
 }

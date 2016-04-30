@@ -1,5 +1,9 @@
 package sr.business.stfs.activities;
 
+import android.app.ProgressDialog;
+import android.content.Context;
+import android.content.Intent;
+import android.content.SharedPreferences;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
@@ -15,7 +19,9 @@ import android.widget.Toast;
 import com.google.gson.Gson;
 import com.mobsandgeeks.saripaar.ValidationError;
 import com.mobsandgeeks.saripaar.Validator;
+import com.mobsandgeeks.saripaar.annotation.ConfirmPassword;
 import com.mobsandgeeks.saripaar.annotation.NotEmpty;
+import com.mobsandgeeks.saripaar.annotation.Password;
 
 import java.io.IOException;
 import java.util.List;
@@ -30,9 +36,12 @@ public class SignUpActivity extends AppCompatActivity implements Validator.Valid
 
     @NotEmpty
     private EditText email, name, surName, phone1;
+    private EditText phone2, phone3, address;
     @NotEmpty
+    @Password(scheme = Password.Scheme.ALPHA_NUMERIC, min = 8)
     private EditText password;
     @NotEmpty
+    @ConfirmPassword
     private EditText passwordConfirm;
     private Validator validator;
 
@@ -84,6 +93,9 @@ public class SignUpActivity extends AppCompatActivity implements Validator.Valid
         name = (EditText) findViewById(R.id.edit_text_name);
         surName = (EditText) findViewById(R.id.edit_text_surname);
         phone1 = (EditText) findViewById(R.id.edit_text_phone);
+        phone2 = (EditText) findViewById(R.id.edit_text_phone2);
+        phone3 = (EditText) findViewById(R.id.edit_text_phone3);
+        address = (EditText) findViewById(R.id.edit_text_address);
 
         if (signUp != null) {
             signUp.setOnClickListener(new View.OnClickListener() {
@@ -104,27 +116,42 @@ public class SignUpActivity extends AppCompatActivity implements Validator.Valid
         user.setU_phone1(phone1.getText().toString());
         user.setU_password(password.getText().toString());
         user.setU_surname(surName.getText().toString());
+
+        //Not Required Fields
+        user.setU_phone2(phone2.getText().toString());
+        user.setU_phone3(phone3.getText().toString());
+        user.setU_address(address.getText().toString());
         String json = gson.toJson(user);
 
+        SharedPreferences sharedPref = getPreferences(Context.MODE_PRIVATE);
+        SharedPreferences.Editor editor = sharedPref.edit();
+        editor.putString("email", email.getText().toString());
+        editor.commit();
+
         new PostUser(json).execute();
-
-
     }
 
     private class PostUser extends AsyncTask<Void,Void,Void>{
 
         String json,response;
         NetworkClient client = Dataholder.getInstance().getNetworkClient();
+        ProgressDialog progress;
 
         public PostUser(String json){
             this.json = json;
         }
 
+        @Override
+        protected void onPreExecute() {
+            super.onPreExecute();
+            progress = ProgressDialog.show(SignUpActivity.this, "Creating",
+                    "creating user", true);
+        }
 
         @Override
         protected Void doInBackground(Void... params) {
             try {
-                response = client.post(Global.domain + Global.app +Global.model,json);
+                response = client.post(Global.domain + Global.app +Global.model,json).body().toString();
             } catch (IOException e) {
                 e.printStackTrace();
             }
@@ -134,7 +161,9 @@ public class SignUpActivity extends AppCompatActivity implements Validator.Valid
         @Override
         protected void onPostExecute(Void aVoid) {
             super.onPostExecute(aVoid);
+            progress.dismiss();
             Toast.makeText(SignUpActivity.this, response, Toast.LENGTH_SHORT).show();
+            startActivity(new Intent(SignUpActivity.this,VerificationActivity.class));
         }
     }
 

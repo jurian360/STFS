@@ -1,6 +1,8 @@
 package sr.business.stfs.activities;
 
+import android.content.Context;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
@@ -8,7 +10,6 @@ import android.support.v7.widget.Toolbar;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
-import android.widget.TextView;
 import android.widget.Toast;
 
 import com.google.gson.Gson;
@@ -26,82 +27,65 @@ import sr.business.stfs.utils.Dataholder;
 import sr.business.stfs.utils.Global;
 import sr.business.stfs.utils.NetworkClient;
 
-public class LoginActivity extends AppCompatActivity implements Validator.ValidationListener {
+public class VerificationActivity extends AppCompatActivity implements Validator.ValidationListener{
 
     @NotEmpty
-    private EditText email,password;
+    private EditText verificationCode;
     private Validator validator;
-
+    private String email;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_login);
+        setContentView(R.layout.activity_verification);
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
 
         validator = new Validator(this);
         validator.setValidationListener(this);
+
+        SharedPreferences sharedPref = getPreferences(Context.MODE_PRIVATE);
+        email = sharedPref.getString("email","");
+
         init();
     }
 
     private void init() {
-        Button login = (Button) findViewById(R.id.button_login);
-        Button signup = (Button) findViewById(R.id.button_sign_up);
-
-        if (signup != null) {
-            signup.setOnClickListener(new View.OnClickListener() {
-                @Override
-                public void onClick(View v) {
-                    Intent signUpIntent = new Intent(LoginActivity.this,SignUpActivity.class);
-                    startActivity(signUpIntent);
-                }
-            });
-        }
-
-        if (login != null) {
-            login.setOnClickListener(new View.OnClickListener() {
+        verificationCode = (EditText) findViewById(R.id.edit_text_verify);
+        Button button = (Button) findViewById(R.id.button_verify);
+        if (button != null) {
+            button.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
                     validator.validate();
                 }
             });
         }
-
-        email = (EditText) findViewById(R.id.edit_text_email);
-        password = (EditText) findViewById(R.id.edit_text_password);
-
-        TextView text = (TextView) findViewById(R.id.textClick);
-        if (text != null) {
-            text.setOnClickListener(new View.OnClickListener() {
-                @Override
-                public void onClick(View v) {
-                    startActivity(new Intent(LoginActivity.this,VerificationActivity.class));
-                }
-            });
-        }
     }
 
-    private void loginUser(String email,String password){
+    @Override
+    public void onValidationSucceeded() {
         Stfsuser user = new Stfsuser();
         user.setU_email(email);
-        user.setU_password(password);
+        user.setU_code(verificationCode.getText().toString());
+        Gson gson = Dataholder.getInstance().getGson();
+        String json = gson.toJson(user);
 
-        new SignInNetworkCall(user).execute();
+        new PostUser(json).execute();
     }
 
-    private class SignInNetworkCall extends AsyncTask<Void,Void,Void>{
-        Stfsuser user;
+    private class PostUser extends AsyncTask<Void,Void,Void> {
+
+        String json;
         Response response;
-        Gson gson = Dataholder.getInstance().getGson();
         NetworkClient client = Dataholder.getInstance().getNetworkClient();
 
-        public SignInNetworkCall(Stfsuser user){
-            this.user = user;
+        public PostUser(String json){
+            this.json = json;
         }
+
 
         @Override
         protected Void doInBackground(Void... params) {
-            String json = gson.toJson(user);
             try {
                 response = client.post(Global.loginWebservice,json);
             } catch (IOException e) {
@@ -113,23 +97,18 @@ public class LoginActivity extends AppCompatActivity implements Validator.Valida
         @Override
         protected void onPostExecute(Void aVoid) {
             super.onPostExecute(aVoid);
+            Toast.makeText(VerificationActivity.this, response.body().toString(), Toast.LENGTH_SHORT).show();
             switch (response.code()){
                 case 302:
-                    Intent view = new Intent(LoginActivity.this,MainActivity.class);
-                    startActivity(view);
+                    //
                     break;
-                case 404:
-                    Toast.makeText(LoginActivity.this, "User/Password Mismatch", Toast.LENGTH_SHORT).show();
+                case 202:
+                    startActivity(new Intent(VerificationActivity.this,MainActivity.class));
                     break;
                 default:
-                    //empty
+                    //
             }
         }
-    }
-
-    @Override
-    public void onValidationSucceeded() {
-        loginUser(email.getText().toString(),password.getText().toString());
     }
 
     @Override
