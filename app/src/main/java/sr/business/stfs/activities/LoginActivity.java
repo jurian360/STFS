@@ -62,7 +62,8 @@ public class LoginActivity extends AppCompatActivity implements Validator.Valida
             login.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
-                    validator.validate();
+                    //validator.validate();
+                    startActivity(new Intent(LoginActivity.this,MainActivity.class));
                 }
             });
         }

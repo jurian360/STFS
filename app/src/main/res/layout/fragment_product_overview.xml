@@ -2,12 +2,48 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    xmlns:fab="http://schemas.android.com/apk/res-auto"
     tools:context="sr.business.stfs.fragments.ProductOverviewFragment">
 
-    <!-- TODO: Update blank fragment layout -->
-    <TextView
+    <RelativeLayout
         android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:text="Product Overview" />
+        android:layout_height="match_parent">
+
+        <android.support.v7.widget.RecyclerView
+            android:id="@+id/recycler_product"
+            android:paddingLeft="@dimen/activity_horizontal_margin"
+            android:paddingRight="@dimen/activity_horizontal_margin"
+            android:paddingTop="@dimen/activity_vertical_margin"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"/>
+
+        <com.github.clans.fab.FloatingActionMenu
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignParentBottom="true"
+            android:layout_alignParentEnd="true"
+            android:layout_alignParentRight="true">
+
+            <com.github.clans.fab.FloatingActionButton
+                android:id="@+id/menu_item1"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:src="@drawable/ic_menu_gallery"
+                fab:fab_size="mini"
+                fab:fab_colorNormal="@color/colorPrimary"
+                fab:fab_label="Menu item 1" />
+
+            <com.github.clans.fab.FloatingActionButton
+                android:id="@+id/menu_item2"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:src="@drawable/ic_menu_camera"
+                fab:fab_size="mini"
+                fab:fab_colorNormal="@color/colorPrimary"
+                fab:fab_label="Menu item 2" />
+
+        </com.github.clans.fab.FloatingActionMenu>
+
+    </RelativeLayout>
 
 </FrameLayout>

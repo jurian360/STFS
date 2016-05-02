@@ -2,12 +2,43 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    xmlns:fab="http://schemas.android.com/apk/res-auto"
     tools:context="sr.business.stfs.fragments.CategoryFragment">
 
-    <!-- TODO: Update blank fragment layout -->
-    <TextView
+    <RelativeLayout
         android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:text="Category Fragment" />
+        android:layout_height="match_parent">
+
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:text="Category Fragment" />
+
+        <com.github.clans.fab.FloatingActionMenu
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignParentBottom="true"
+            android:layout_alignParentEnd="true"
+            android:layout_alignParentRight="true">
+
+            <com.github.clans.fab.FloatingActionButton
+                android:id="@+id/menu_item1"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:src="@drawable/ic_menu_gallery"
+                fab:fab_size="mini"
+                fab:fab_label="Menu item 1" />
+
+            <com.github.clans.fab.FloatingActionButton
+                android:id="@+id/menu_item2"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:src="@drawable/ic_menu_camera"
+                fab:fab_size="mini"
+                fab:fab_label="Menu item 2" />
+
+        </com.github.clans.fab.FloatingActionMenu>
+
+    </RelativeLayout>
 
 </FrameLayout>
