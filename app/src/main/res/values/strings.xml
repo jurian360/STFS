@@ -13,4 +13,5 @@
     <string name="title_activity_verification">VerificationActivity</string>
     <string name="email">verify_email</string>
     <string name="title_activity_create_product">CreateProductActivity</string>
+    <string name="title_activity_product_detail">ProductDetailActivity</string>
 </resources>
